@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <title>Product CRUD</title>
+    <style>
+      /* General Styles */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+
+      .container {
+        width: 80%;
+        margin: 30px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+      }
+
+      /* Button Styling */
+      .btn {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        display: inline-block;
+        transition: background-color 0.3s;
+      }
+
+      .btn:hover {
+        background-color: #45a049;
+      }
+
+      /* Table Styling */
+      .product-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      .product-table th,
+      .product-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .product-table th {
+        background-color: #f1f1f1;
+        color: #333;
+      }
+
+      .product-table tr:hover {
+        background-color: #f9f9f9;
+      }
+
+      /* Image Styling */
+      .product-img {
+        width: 100px;
+        height: auto;
+        border-radius: 5px;
+      }
+
+      /* Action Buttons Styling */
+      .edit-btn,
+      .delete-btn {
+        text-decoration: none;
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 5px;
+        margin: 0 5px;
+        display: inline-block;
+        transition: background-color 0.3s;
+      }
+
+      .edit-btn {
+        background-color: #4caf50;
+      }
+
+      .edit-btn:hover {
+        background-color: #45a049;
+      }
+
+      .delete-btn {
+        background-color: #f44336;
+      }
+
+      .delete-btn:hover {
+        background-color: #e53935;
+      }
+
+      .edit-btn i,
+      .delete-btn i {
+        margin-right: 5px;
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        overflow: auto;
+        padding-top: 60px;
+      }
+
+      .modal-content {
+        background-color: #fff;
+        margin: 5% auto;
+        padding: 40px;
+        border-radius: 10px;
+        width: 80%;
+        max-width: 600px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      }
+
+      .close {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        position: absolute;
+        top: 10px;
+        right: 20px;
+      }
+
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Product List</h1>
+      <a href="/add" id="openModalBtn" class="btn">Add Product</a>
+
+      <!-- Product Table -->
+      <table class="product-table">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Product Name</th>
+            <th>Price</th>
+
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% products.forEach(product => { %>
+          <tr>
+            <td>
+              <img
+                src="/images/<%= product.image %>"
+                alt="<%= product.name %>"
+                class="product-img"
+              />
+            </td>
+            <td><%= product.name %></td>
+            <td>Rs:<%= product.price %></td>
+
+            <td>
+              <a href="/edit/<%= product.id %>" class="edit-btn"
+                ><i class="fas fa-edit"></i> Edit</a
+              >
+              <a href="/delete/<%= product.id %>" class="delete-btn"
+                ><i class="fas fa-trash-alt"></i> Delete</a
+              >
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <!-- Modal for Add Product -->
+    <div id="myModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeModalBtn">&times;</span>
+        <h2>Add a New Product</h2>
+        <form action="/add" method="POST" enctype="multipart/form-data">
+          <label for="name">Product Name:</label>
+          <input type="text" name="name" id="name" required /><br />
+
+          <label for="price">Price:</label>
+          <input type="number" name="price" id="price" required /><br />
+
+          <label for="image">Product Image:</label>
+          <input type="file" name="image" id="image" accept="image/*" /><br />
+
+          <button type="submit">Add Product</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Open the modal when the link is clicked
+      var modal = document.getElementById("myModal");
+      var btn = document.getElementById("openModalBtn");
+      var span = document.getElementById("closeModalBtn");
+
+      // When the user clicks the link, open the modal
+      btn.onclick = function () {
+        modal.style.display = "block";
+      };
+
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function () {
+        modal.style.display = "none";
+      };
+
+      // Close modal when the user clicks outside of it
+      window.onclick = function (event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      };
+    </script>
+  </body>
+</html>
