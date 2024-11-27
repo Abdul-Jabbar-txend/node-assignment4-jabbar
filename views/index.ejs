@@ -35,7 +35,7 @@
 
       /* Button Styling */
       .btn {
-        background-color: #4caf50;
+        background-color: #4c93af;
         color: white;
         padding: 10px 20px;
         text-decoration: none;
@@ -46,7 +46,7 @@
       }
 
       .btn:hover {
-        background-color: #45a049;
+        background-color: #4c93af;
       }
 
       /* Table Styling */
@@ -92,11 +92,11 @@
       }
 
       .edit-btn {
-        background-color: #4caf50;
+        background-color: #4c93af;
       }
 
       .edit-btn:hover {
-        background-color: #45a049;
+        background-color: #4c93af;
       }
 
       .delete-btn {
@@ -151,6 +151,48 @@
         text-decoration: none;
         cursor: pointer;
       }
+
+      /* Delete Confirmation Modal Styles */
+      .confirm-modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        overflow: auto;
+        padding-top: 100px;
+      }
+
+      .confirm-modal-content {
+        background-color: #fff;
+        margin: 0 auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 300px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .confirm-modal button {
+        background-color: #4c93af;
+        color: white;
+        padding: 10px 20px;
+        margin: 10px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+      }
+
+      .confirm-modal button.cancel {
+        background-color: #f44336;
+      }
+
+      .confirm-modal button:hover {
+        opacity: 0.9;
+      }
     </style>
   </head>
   <body>
@@ -186,15 +228,19 @@
               <a href="/edit/<%= product.id %>" class="edit-btn"
                 ><i class="fas fa-edit"></i> Edit</a
               >
-              <a href="/delete/<%= product.id %>" class="delete-btn"
-                ><i class="fas fa-trash-alt"></i> Delete</a
+              <button
+                class="delete-btn"
+                onclick="openConfirmDeleteModal(<%= product.id %>)"
               >
+                <i class="fas fa-trash-alt"></i> Delete
+              </button>
             </td>
           </tr>
           <% }) %>
         </tbody>
       </table>
     </div>
+
     <!-- Modal for Add Product -->
     <div id="myModal" class="modal">
       <div class="modal-content">
@@ -215,26 +261,60 @@
       </div>
     </div>
 
+    <!-- Confirm Delete Modal -->
+    <div id="confirmDeleteModal" class="confirm-modal">
+      <div class="confirm-modal-content">
+        <h3>Are you sure you want to delete this product?</h3>
+        <button id="confirmDeleteBtn">OK</button>
+        <button class="cancel" id="cancelDeleteBtn">Cancel</button>
+      </div>
+    </div>
+
     <script>
-      // Open the modal when the link is clicked
+      // Open the modal for Add Product
       var modal = document.getElementById("myModal");
       var btn = document.getElementById("openModalBtn");
       var span = document.getElementById("closeModalBtn");
 
-      // When the user clicks the link, open the modal
       btn.onclick = function () {
         modal.style.display = "block";
       };
 
-      // When the user clicks on <span> (x), close the modal
       span.onclick = function () {
         modal.style.display = "none";
       };
 
-      // Close modal when the user clicks outside of it
       window.onclick = function (event) {
         if (event.target == modal) {
           modal.style.display = "none";
+        }
+      };
+
+      // Confirm Delete Modal
+      var confirmDeleteModal = document.getElementById("confirmDeleteModal");
+      var confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+      var cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+      var currentProductId = null;
+
+      function openConfirmDeleteModal(productId) {
+        currentProductId = productId;
+        confirmDeleteModal.style.display = "block";
+      }
+
+      // When user clicks OK
+      confirmDeleteBtn.onclick = function () {
+        window.location.href = "/delete/" + currentProductId;
+      };
+
+      // When user clicks Cancel
+      cancelDeleteBtn.onclick = function () {
+        confirmDeleteModal.style.display = "none";
+      };
+
+      // Close modal when clicking outside
+      window.onclick = function (event) {
+        if (event.target == confirmDeleteModal) {
+          confirmDeleteModal.style.display = "none";
         }
       };
     </script>

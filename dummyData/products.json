@@ -1,8 +1,14 @@
 [
   {
     "id": 1,
-    "name": "dfd",
-    "price": "3e34",
-    "image": "1732631036421.webp"
+    "name": "T-shirt",
+    "price": 300,
+    "image": "1732688968341.webp"
+  },
+  {
+    "id": 2,
+    "name": "product 1",
+    "price": 222,
+    "image": "1732689792027.webp"
   }
 ]
